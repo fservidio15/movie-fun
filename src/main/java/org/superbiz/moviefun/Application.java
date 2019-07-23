@@ -10,6 +10,7 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.superbiz.moviefun.blobstore.BlobStore;
 import org.superbiz.moviefun.blobstore.FileStore;
+import org.superbiz.moviefun.blobstore.S3Store;
 import org.superbiz.moviefun.blobstore.ServiceCredentials;
 
 @SpringBootApplication
@@ -24,7 +25,7 @@ public class Application {
         return new ServletRegistrationBean(actionServlet, "/moviefun/*");
     }
 
-//    @Bean
+    @Bean
     public BlobStore blobStore(
             ServiceCredentials serviceCredentials,
             @Value("${vcap.services.photo-storage.credentials.endpoint:#{null}}") String endpoint
@@ -39,11 +40,15 @@ public class Application {
         if (endpoint != null) {
             s3Client.setEndpoint(endpoint);
         }
-        return null;
-//        return new S3Store(s3Client, photoStorageBucket);
+        return new S3Store(s3Client, photoStorageBucket);
     }
 
     @Bean
+    public ServiceCredentials serviceCredentials(@Value("${vcap.services}") String vcapServices) {
+        return new ServiceCredentials(vcapServices);
+    }
+
+//    @Bean
     public BlobStore fileStore(){
         return new FileStore();
     }

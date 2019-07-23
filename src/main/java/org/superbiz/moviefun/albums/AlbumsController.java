@@ -15,14 +15,13 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.lang.ClassLoader.getSystemResource;
-import static java.lang.ClassLoader.getSystemResourceAsStream;
 import static java.lang.String.format;
 
 @Controller
 @RequestMapping("/albums")
 public class AlbumsController {
 
+    public static final String DEFAULT_COVER_JPG = "default-cover.jpg";
     private final AlbumsBean albumsBean;
     private BlobStore store;
 
@@ -77,7 +76,8 @@ public class AlbumsController {
     }
 
     private Blob defaultImageBlob() throws IOException {
-        return store.get("default-cover.jpg").get();
+//        return store.get(DEFAULT_COVER_JPG).get();
+        return new Blob("default-cover.jpg", this.getClass().getClassLoader().getResourceAsStream("default-cover.jpg"), "image/jpeg");
     }
 
 
